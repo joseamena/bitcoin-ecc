@@ -10,11 +10,11 @@ import Foundation
 
 public class PrivateKey {
     let secret: BInt
-    let point: Point?
+    let point: S256Point?
     
     public init(secret: BInt) {
         self.secret = secret
-        self.point = try? S256Point.G.point * secret
+        self.point = try? S256Point.G * secret
     }
     
     public func sign(message: BInt) -> Signature? {

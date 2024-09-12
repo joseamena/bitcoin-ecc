@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import BigInt
+import RIPEMD160
+import CryptoKit
 
 extension Array where Element == Byte {
     
@@ -44,5 +47,47 @@ extension Array where Element == Byte {
             result = base58Alphabet[mod] + result
         }
         return prefix + result
+    }
+    
+    var base58Checksum: String {
+        let hash = SHA256.hash(data: self.data).withUnsafeBytes { pointer in
+            return Array<UInt8>(pointer)
+        }
+        
+        let hash2 = SHA256.hash(data: hash.data).withUnsafeBytes { pointer in
+            return Array<UInt8>(pointer)
+        }
+        
+        let slice = hash2[0...3]
+        print("JM", "4 bytes checksum: ", Array(slice).hexString)
+        print("JM", "data + checksum: ", (self + slice).hexString)
+        return (self + slice).base58
+    }
+}
+
+extension Data {
+    func hexEncodedString() -> String {
+        return map { String(format: "%02hhx", $0) }.joined()
+    }
+    
+    func ripemd160() -> Data {
+        RIPEMD160.hash(data: self)
+    }
+    
+    func hash160() -> Data {
+        print("JM", "data to hash", self.hexEncodedString())
+        let hash = SHA256.hash(data: self).withUnsafeBytes { pointer in
+            return Array<UInt8>(pointer)
+        }
+//        guard let round1 = SHA256.hash(data: self).description.data(using: .utf8) else {
+//            return Data()
+//        }
+        
+        print("JM", "sha256:", hash.data.hexEncodedString())
+//        guard let round2 = SHA256.hash(data: round1).description.data(using: .utf8) else {
+//            return Data()
+//        }
+        print("JM", "hash160:", hash.data.ripemd160().hexEncodedString())
+        return hash.data.ripemd160()
     }
 }
