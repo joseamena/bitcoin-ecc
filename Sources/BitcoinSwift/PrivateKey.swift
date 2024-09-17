@@ -30,6 +30,10 @@ public class PrivateKey {
         return Signature(r: r, s: s)
     }
     
+    public func getAddress(network: S256Point.Network = .mainNet) -> String? {
+        return point?.address(network: network)
+    }
+    
     private var k: BInt {
         BInt(bitWidth: 256)
     }
