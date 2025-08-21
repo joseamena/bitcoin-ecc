@@ -49,7 +49,7 @@ extension Array where Element == Byte {
         return prefix + result
     }
     
-    var base58Checksum: String {
+    public var base58Checksum: String {
         let hash = SHA256.hash(data: self.data).withUnsafeBytes { pointer in
             return Array<UInt8>(pointer)
         }
@@ -66,11 +66,11 @@ extension Array where Element == Byte {
 }
 
 extension Data {
-    func hexEncodedString() -> String {
+    public func hexEncodedString() -> String {
         return map { String(format: "%02hhx", $0) }.joined()
     }
     
-    func ripemd160() -> Data {
+    public func ripemd160() -> Data {
         RIPEMD160.hash(data: self)
     }
     
